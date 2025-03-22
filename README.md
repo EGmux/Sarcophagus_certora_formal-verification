@@ -8,7 +8,7 @@
 chmod +x ./bootstrap.sh
 ./bootstrap.sh
 ```
-- run the following command
+- run the following command inside the container
 ```bash
 certoraRun src/ERC20Fixed.sol --verify ERC20Fixed:specs/ERC20Fixed.spec
 ```
