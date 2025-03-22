@@ -6,6 +6,13 @@
 
 [guide on installing docker](https://docs.docker.com/engine/install/)
 
+- docker requires the user to belong to docker group if running as non root
+
+```bash
+sudo groupadd docker
+sudo usermod -aG docker $USER
+```
+- logout and login again or reboot the system
 - provide you certora key in bootstrap.sh
 - run the bootstrap script
 ```bash
