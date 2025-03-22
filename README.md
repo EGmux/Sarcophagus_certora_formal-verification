@@ -24,3 +24,9 @@ chmod +x ./bootstrap.sh
 certoraRun src/ERC20Fixed.sol --verify ERC20Fixed:specs/ERC20Fixed.spec
 ```
 
+- you can also run the following commands to install another version of the solidity compiler(solc), the default is v0.8.0
+
+```bash
+solc-select install 0.8.1
+solc-select use 0.8.1 
+```
