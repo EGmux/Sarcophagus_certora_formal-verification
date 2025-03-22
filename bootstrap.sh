@@ -1,7 +1,7 @@
 #! /bin/bash
 
 dockerfile_path="$PWD/dockerfile"
-project_path="$PWD/project"
+project_path="$PWD/project/{src,spec,conf}"
 host_port=8080
 docker_port=256
 container_name="certora_container"
