@@ -6,7 +6,7 @@
 
 [guide on installing docker](https://docs.docker.com/engine/install/)
 
-- docker requires the user to belong to docker group if running as non root
+- docker requires the user in the docker group if running as non root
 
 ```bash
 sudo groupadd docker
