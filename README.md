@@ -4,7 +4,7 @@
 
 - install docker
 
-(https://docs.docker.com/engine/install/)[guide on installing docker]
+[guide on installing docker](https://docs.docker.com/engine/install/)
 
 - provide you certora key in bootstrap.sh
 - run the bootstrap script
