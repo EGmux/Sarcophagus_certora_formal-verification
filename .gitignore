@@ -1,2 +1,3 @@
-conf/.certora_internal
+.certora_internal
 src/@openzepellin/*
+src/@openzepellin

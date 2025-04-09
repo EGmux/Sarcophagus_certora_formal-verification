@@ -12,60 +12,60 @@ import "./ArchaeologistsHarness.sol";
 import "./SarcophagusHarness.sol";
 
 
-function FindArch(address target, Datas.Data data) returns (int){
+function FindArch(address target, Datas.Data storage data) returns (uint256){
     uint archLength = data.archaeologists.length;
-    Datas.Arch archs = data.archaeologist;
+    Datas.Arch[] storage archs = data.archaeologists;
     for(uint index=0; index < archLength; ++index ){
-        if(archs[index].embalmerAddress == target){
+        if(archs[index].archaeologistAddress == target){
             return index;
         }
     }
-    return -1;
+    return type(uint256).max;
 }
 
 
-function FindEmbalmer(address target, Datas.Data data) returns (int){
+function FindEmbalmer(address target, Datas.Data storage data) returns (uint256){
     uint embalmersLength = data.embalmers.length;
-    Datas.Embalmer embalmers = data.embalmers;
+    Datas.Embalmer[] storage embalmers = data.embalmers;
     for(uint index=0; index < embalmersLength; ++index ){
         if(embalmers[index].embalmerAddress == target){
             return index;
         }
     }
-    return -1;
+    return type(uint256).max;
 }
 
-function FindRecipient(address target, Datas.Data data) returns (int){
+function FindRecipient(address target, Datas.Data storage data) returns (uint256){
     uint recipientLength = data.recipients.length;
-    Datas.Recipient recipients = data.recipients;
+    Datas.Recipient[] storage recipients = data.recipients;
     for(uint index=0; index < recipientLength; ++index ){
         if(recipients[index].recipientAddress == target){
             return index;
         }
     }
-    return -1;
+    return type(uint256).max;
 }
 
 
-function FindSarcophagus(bytes32 target, Datas.Data data) returns (int){
-    uint sarcophagusLength = data.sarcophaguses.length;
-    Datas.Sarcophagus sarcophaguses = data.sarcophaguses;
+function FindSarcophagus(bytes32 target, Datas.Data storage data) returns (uint256){
+    uint256 sarcophagusLength = data.sarcophaguses.length;
+    Datas.Sarcophagus[] storage sarcophaguses = data.sarcophaguses;
     for(uint index=0; index < sarcophagusLength; ++index ){
         if(sarcophaguses[index].sarcophagusIdentifier == target){
             return index;
         }
     }
-    return -1;
+    return type(uint256).max;
 }
 
 
-function FindKeys(bytes32 target, Datas.Data data) returns (int){
-    uint keysLength = data.keys.length;
-    Datas.Keys keys = data.usedKeys;
-    for(uint index=0; index < keysLength; ++index ){
-        if(keys[index].keyidentifier == target){
+function FindKeys(bytes storage target, Datas.Data storage data) returns (uint256){   
+    uint256 keysLength = data.usedKeys.length;
+    Datas.Keys[] storage keys = data.usedKeys;
+    for(uint256 index=0; index < keysLength; ++index ){
+        if(keccak256(keys[index].keyidentifier) == keccak256(target)){
             return index;
         }
     }
-    return -1;
+    return  type(uint256).max;
 }

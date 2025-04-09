@@ -37,7 +37,7 @@ library Archaeologists {
         // revert if necessary
         //TODO adapter, need to deal with the revert
         uint256 indexArch = FindArch(account, data);
-        if(indexArch == -1){
+        if(indexArch == type(uint256).max){
             return;
         }
         // a contradiction
@@ -59,8 +59,8 @@ library Archaeologists {
     ) private {
         // load up the archaeologist
         //aadpter
-        uint256 indexArch = FindArch(target, data);
-        Types.Archaeologist storage arch = data.archaeologists[archAddress];
+        uint256 indexArch = FindArch(archAddress, data);
+        Types.Archaeologist storage arch = data.archaeologists[indexArch].archaeologist;
 
         // increase the freeBond variable by amount
         arch.freeBond = arch.freeBond + amount;
@@ -250,8 +250,12 @@ library Archaeologists {
             });
 
         // save the new archaeologist into relevant data structures
-        Arch storage registered = Arch({archaeologistAddress:msg.sender,
-                            archaeologist: newArch});
+        Datas.Arch storage registered = Datas.Arch({archaeologistAddress:msg.sender,
+                            archaeologist: newArch
+                            archaeologistSuccess:[],
+                            archaeologistCancel:[]
+                            archaeologistAccusal:[],
+                            });
     
         data.archaeologists.push(registered);
 

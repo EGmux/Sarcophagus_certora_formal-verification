@@ -64,7 +64,7 @@ contract Sarcophagus is Initializable {
         public
         view
         virtual
-        returns (Datas.Arch)  
+        returns (Types.Archaeologist memory)  
     {
         return _data.archaeologists[index].archaeologist;
     }
@@ -83,7 +83,7 @@ contract Sarcophagus is Initializable {
         returns (Types.Archaeologist memory)
     {
         uint256 index = FindArch(account, _data);
-        if(index == -1){
+        if(index == type(uint256).max){
             Types.Archaeologist memory emptyArch;
             return emptyArch;
         }
@@ -112,7 +112,7 @@ contract Sarcophagus is Initializable {
         virtual
         returns (bytes32)
     {
-        return _data.sarcophaguses[index].sarcophagusIndentifier;
+        return _data.sarcophaguses[index].sarcophagusIdentifier;
     }
 
     /**
@@ -128,7 +128,7 @@ contract Sarcophagus is Initializable {
         returns (uint256)
     {
         uint256 index = FindEmbalmer(embalmer, _data);
-        if(index == -1){
+        if(index == type(uint256).max){
             return type(uint256).max;
         }
         return _data.embalmers[index].embalmerSarcophaguses.length;
@@ -150,7 +150,7 @@ contract Sarcophagus is Initializable {
         returns (bytes32)
     {
         uint256 index2 = FindEmbalmer(embalmer, _data);
-        if(index2 == -1){
+        if(index2 == type(uint256).max){
             return bytes32(0); 
         }
          return _data.embalmers[index].embalmerSarcophaguses[index];           
@@ -171,7 +171,7 @@ contract Sarcophagus is Initializable {
         returns (uint256)
     {
         uint256 index = FindArch(archaeologist, _data);
-        if(index == -1){
+        if(index == type(uint256).max){
             return type(uint256).max;
         }
         return _data.archaeologists[index].archaeologistSarcophaguses.length;
@@ -191,10 +191,10 @@ contract Sarcophagus is Initializable {
         uint256 index
     ) public view virtual returns (bytes32) {
         uint256 index2 = FindArch(archaeologist, _data);
-        if(index2 == -1){
+        if(index2 == type(uint256).max){
             return bytes32(0);
         }
-        return _data.archaeologists.archaeologistSarcophaguses[index];
+        return _data.archaeologists[index2].archaeologistSarcophaguses[index];
     }
 
     /**
@@ -210,8 +210,8 @@ contract Sarcophagus is Initializable {
         returns (uint256)
     {
         uint256 index = FindRecipient(recipient, _data);
-        if(index == -1){
-            return type(uint256).max();
+        if(index == type(uint256).max){
+            return type(uint256).max;
         }
         return _data.recipients[index].recipientSarcophaguses.length;
     }
@@ -232,7 +232,7 @@ contract Sarcophagus is Initializable {
         returns (bytes32)
     {
         uint256 index2 = FindRecipient(recipient, _data);
-        if(index2 == -1){
+        if(index2 == type(uint256).max){
             return bytes32(0);
         }
         return _data.recipients[index2].recipientSarcophaguses[index];
@@ -253,10 +253,10 @@ contract Sarcophagus is Initializable {
         returns (uint256)
     {
         uint256 index = FindArch(archaeologist, _data);
-        if(index == -1){
-            return type(uint256).max();
+        if(index == type(uint256).max){
+            return type(uint256).max;
         }
-        return _data.archaeologists[index].archaeologistSuccesses.length;
+        return _data.archaeologists[index].archaeologistSuccess.length;
     }
 
     /**
@@ -274,10 +274,10 @@ contract Sarcophagus is Initializable {
         uint256 index
     ) public view returns (bytes32) {
         uint256 index2 = FindArch(archaeologist, _data);
-        if(index2 ==  -1){
+        if(index2 ==  type(uint256).max){
             return bytes32(0);
         }
-        return _data.archaeologists[index2].archaeologistSuccesses[index];
+        return _data.archaeologists[index2].archaeologistSuccess[index];
     }
 
     /**
@@ -292,9 +292,9 @@ contract Sarcophagus is Initializable {
         virtual
         returns (uint256)
     {
-        uint256 index = FindArch(archaeologists, _data);
-        if(index == -1){
-            return type(uint256).max();
+        uint256 index = FindArch(archaeologist, _data);
+        if(index == type(uint256).max){
+            return type(uint256).max;
         }
         return _data.archaeologists[index].archaeologistCancel.length;
     }
@@ -313,7 +313,7 @@ contract Sarcophagus is Initializable {
         uint256 index
     ) public view virtual returns (bytes32) {
         uint256 index2 = FindArch(archaeologist, _data);
-        if(index2 == -1){
+        if(index2 == type(uint256).max){
             return bytes32(0);
         }
         return _data.archaeologists[index2].archaeologistCancel[index];
@@ -330,7 +330,12 @@ contract Sarcophagus is Initializable {
         virtual
         returns (uint256)
     {
-        return _data.archaeologistAccusals[archaeologist].length;
+        //adapter
+        uint256 index = FindArch(archaeologist, _data);
+        if(index == type(uint256).max){
+            return type(uint256).max;
+        }
+        return _data.archaeologists[index].archaeologistAccusal.length;
     }
 
     /**
@@ -347,7 +352,7 @@ contract Sarcophagus is Initializable {
         uint256 index
     ) public view virtual returns (bytes32) {
         uint256 index2 = FindArch(archaeologist, _data);
-        if(index2 == -1){
+        if(index2 == type(uint256).max){
             return bytes32(0);
         }
         return _data.archaeologists[index2].archaeologistAccusal[index];
@@ -367,8 +372,8 @@ contract Sarcophagus is Initializable {
         returns (uint256)
     {
         uint256 index = FindArch(archaeologist, _data);
-        if(index == -1){
-            return type(uint256).max();
+        if(index == type(uint256).max){
+            return type(uint256).max;
         }
         return _data.archaeologists[index].archaeologistCleanup.length;
     }
@@ -387,7 +392,7 @@ contract Sarcophagus is Initializable {
         uint256 index
     ) public view virtual returns (bytes32) {
         uint256 index2 = FindArch(archaeologist, _data);
-        if(index2 == -1){
+        if(index2 == type(uint256).max){
             return bytes32(0);
         }
         return _data.archaeologists[index2].archaeologistCleanup[index];
@@ -406,7 +411,7 @@ contract Sarcophagus is Initializable {
         returns (Types.Sarcophagus memory)
     {
         uint256 index = FindSarcophagus(identifier, _data);
-        if(index != -1){
+        if(index != type(uint256).max){
             Types.Sarcophagus memory emptySarc;
             return emptySarc;
         }

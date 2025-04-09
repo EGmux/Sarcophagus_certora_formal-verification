@@ -123,7 +123,7 @@ library Sarcophaguses {
         uint256 indexSarc = FindSarcophagus(identifier, data);
         // confirm that this exact sarcophagus does not yet exist
         sarcophagusState(
-            data.sarcophaguses[indexSarc].state,
+            data.sarcophaguses[indexSarc].sarcophagus.state,
             Types.SarcophagusStates.DoesNotExist
         );
 
@@ -177,7 +177,7 @@ library Sarcophaguses {
 
         // save the sarcophagus into necessary data structures
         data.sarcophaguses[indexSarc].sarcophagus = sarc;
-        data.sarcophaguses[indexSarc].sarcophagusIdentifiers.push(identifier);
+        data.sarcophaguses[indexSarc].sarcophagusIdentifier = identifier;
         // adater
         uint256 indexEmbalmer = FindEmbalmer(msg.sender, data);
         data.embalmers[indexEmbalmer].embalmerSarcophaguses.push(identifier);
@@ -212,7 +212,8 @@ library Sarcophaguses {
         );
 
         // return index of the new sarcophagus
-        return data.sarcophagusIdentifiers.length - 1;
+        // TODO: might break semantic of code
+        return data.sarcophaguses.length - 1;
     }
 
     /**
@@ -241,7 +242,9 @@ library Sarcophaguses {
         IERC20 sarcoToken
     ) public returns (bool) {
         // load the sarcophagus, and make sure it exists
-        Types.Sarcophagus storage sarc = data.sarcophaguses[identifier];
+        // adapter
+        uint256 indexSarc = FindSarcophagus(identifier, data);
+        Types.Sarcophagus storage sarc = data.sarcophaguses[indexSarc].sarcophagus;
         sarcophagusState(sarc.state, Types.SarcophagusStates.Exists);
 
         // verify that the embalmer is making this transaction
@@ -266,12 +269,13 @@ library Sarcophaguses {
         //TODO: adapter, probably need to fix this 
         uint256 indexKey = FindKeys(sarc.archaeologistPublicKey, data);
         require(
-            !data.usedKeys[indexKey],
+            indexKey != type(uint256).max,
             "public key already used"
         );
+        
 
         // make sure that the new public key can't be used again in the future
-        data.usedKeys[sarc.archaeologistPublicKey] = true;
+        data.usedKeys[indexKey].archaeologistUsedKey = true;
 
         // set the assetId on the sarcophagus
         sarc.assetId = assetId;
@@ -661,7 +665,7 @@ library Sarcophaguses {
     ) public returns (bool) {
         // load the sarcophagus, and make sure it exists
         // adapter
-        uint256 indexSarc = FindArch(identifier, data);
+        uint256 indexSarc = FindSarcophagus(identifier, data);
         Types.Sarcophagus storage sarc = data.sarcophaguses[indexSarc].sarcophagus;
         sarcophagusState(sarc.state, Types.SarcophagusStates.Exists);
 

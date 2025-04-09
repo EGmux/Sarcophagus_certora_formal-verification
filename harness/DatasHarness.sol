@@ -42,15 +42,15 @@ library Datas {
     struct Arch {
         address archaeologistAddress;
         Types.Archaeologist archaeologist;
-        bytes32 archaeologistSuccess;
-        bytes32 archaeologistCancel;
-        bytes32 archaeologistAccusal;
-        bytes32 archaeologistCleanup;
+        bytes32[] archaeologistSuccess;
+        bytes32[] archaeologistCancel;
+        bytes32[] archaeologistAccusal;
+        bytes32[] archaeologistCleanup;
         bytes32[] archaeologistSarcophaguses;
     }
     
     struct Keys {
-        bytes32 keyidentifier;
+        bytes keyidentifier;
         bool archaeologistUsedKey;
     }
     
