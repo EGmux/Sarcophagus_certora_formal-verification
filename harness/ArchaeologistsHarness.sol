@@ -250,12 +250,15 @@ library Archaeologists {
             });
 
         // save the new archaeologist into relevant data structures
-        Datas.Arch storage registered = Datas.Arch({archaeologistAddress:msg.sender,
-                            archaeologist: newArch
-                            archaeologistSuccess:[],
-                            archaeologistCancel:[]
-                            archaeologistAccusal:[],
-                            });
+        Datas.Arch memory registered = Datas.Arch;
+        Datas.Arch.archaeologistAddresses = msg.sender;
+        Datas.Arch.archaeologist= newArch;
+        Datas.Arch.archaeologistSuccess = new bytes32[];
+        Datas.Arch.archaeologistCancel = new bytes32 [];
+        Datas.Arch.archaeologistAccusal = new bytes32 [];
+        Datas.Arch.archaeologistCleanup = new bytes32 [];
+        Datas.Arch.archaeologistSarcophaguses= new bytes32 [];
+                            
     
         data.archaeologists.push(registered);
 
