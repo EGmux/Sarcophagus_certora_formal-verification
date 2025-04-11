@@ -1,6 +1,6 @@
 # formal_verfication_certora(name subject to change)
 
-# how to run you first spec
+# how to run the sarpcophagus.spec
 
 - install docker
 
@@ -21,7 +21,7 @@ chmod +x ./bootstrap.sh
 ```
 - run the following command inside the container
 ```bash
-certoraRun src/ERC20Fixed.sol --verify ERC20Fixed:specs/ERC20Fixed.spec
+certoraRun /project/conf/sarcophagus.conf
 ```
 
 - you can also run the following commands to install another version of the solidity compiler(solc), the default is v0.8.0
