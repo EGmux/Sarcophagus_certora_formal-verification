@@ -1,7 +1,7 @@
 #! /bin/bash
 
 dockerfile_path="$PWD/dockerfile"
-project_path="$PWD/project/{src,spec,conf}"
+project_path="$PWD/project/{src,specs,conf}"
 host_port=8080
 docker_port=256
 container_name="certora_container"
@@ -20,6 +20,7 @@ function build_container () {
 			fi
 			if [[ -z "$(docker images -q $image_name 2>&1 | head )" ]]; then
 				printf "error while building the image $image_name\n"
+				exit
 			else
 				printf "image built.\n"
 			fi
@@ -44,8 +45,10 @@ function start_container () {
 				if [[ $verbose == "true" ]]; then
 					docker run -it -d \
 						-e CERTORAKEY=$certora_key \
-						--mount type=bind,src="$(pwd)"/project/conf,dst=/project/conf \
-						--mount type=bind,src="$(pwd)"/project/specs,dst=/project/specs \
+						--mount type=bind,src="$(pwd)"/project/certora/conf,dst=/project/certora/conf \
+						--mount type=bind,src="$(pwd)"/project/certora/specs,dst=/project/certora/specs \
+						--mount type=bind,src="$(pwd)"/project/certora/aux,dst=/project/certora/aux \
+						--mount type=bind,src="$(pwd)"/project/certora/harness,dst=/project/certora/harness \
 						--mount type=bind,src="$(pwd)"/project/src,dst=/project/src \
 						-p $host_port:$docker_port \
 						--name $container_name \
@@ -53,8 +56,10 @@ function start_container () {
 				else
 					docker run -it -d \
 						-e CERTORAKEY=$certora_key \
-						--mount type=bind,src="$(pwd)"/project/conf,dst=/project/conf \
-						--mount type=bind,src="$(pwd)"/project/specs,dst=/project/specs \
+						--mount type=bind,src="$(pwd)"/project/certora/conf,dst=/project/certora/conf \
+						--mount type=bind,src="$(pwd)"/project/certora/specs,dst=/project/certora/specs \
+						--mount type=bind,src="$(pwd)"/project/certora/aux,dst=/project/certora/aux \
+						--mount type=bind,src="$(pwd)"/project/certora/harness,dst=/project/certora/harness \
 						--mount type=bind,src="$(pwd)"/project/src,dst=/project/src \
 						-p $host_port:$docker_port \
 						--name $container_name \
@@ -68,6 +73,7 @@ function start_container () {
 			printf "starting the $container_name container\n"
 				if [[ "$(docker start $container_name 2>&1 | head)" != "$container_name" ]]; then
 					printf "error while starting the container\n"
+					exit
 				fi
 			fi
 			printf "certora container started\n"
@@ -76,7 +82,7 @@ function start_container () {
 }
 
 function init_container () {
-		if [[ ! -d "$project_path" ]]; then
+		if [[ ! -d "$PWD/project/src" || ! -d "$PWD/project/conf" || ! -d "$PWD/project/specs" ]]; then
 			create_dirs
 		fi
 
@@ -96,6 +102,7 @@ function stop_container () {
 		fi
 		if [[ "$(docker inspect $container_name --format {{.State.Running}} 2>&1 | head -n 1)" == "true" ]]; then
 			printf "error while stopping $container_name\n"
+			exit
 		else
 			printf "$container_name stopped\n"
 		fi
@@ -110,6 +117,7 @@ function delete_container () {
 		fi
 		if [[ "$(docker inspect $container_name 2>&1 | head -n 1)" != "[]" ]]; then
 			printf "error while deleting $container_name container\n"
+			exit
 		else
 			printf "container $container_name deleted\n"
 		fi
@@ -124,6 +132,7 @@ function delete_image () {
 	fi
 	if [[ -n "$(docker images -q $image_name 2>&1 | head )" ]]; then
 		printf "error while deleting the image $image_name\n"
+		exit
 	else 
 		printf "image $image_name  deleted successfully\n"
 	fi
