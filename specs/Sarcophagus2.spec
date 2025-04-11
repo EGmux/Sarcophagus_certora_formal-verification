@@ -102,3 +102,4 @@ rule createdSarcophagusAfterCancelReturnsDiggingFeeButNotBountyToArchaeologist(e
     // didCancel ==  false: 
 }
 
+rule createSarcophagus

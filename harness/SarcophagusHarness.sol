@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -7,10 +6,10 @@ import "../src/@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "../src/contracts/libraries/Events.sol";
 import "../src/contracts/libraries/Types.sol";
-import "./DatasHarness.sol"; 
-import "./ArchaeologistsHarness.sol";
-import "./SarcophagusesHarness.sol";
-import "./AuxHarness.sol";
+import "../src/contracts/libraries/Datas.sol";
+import "../src/contracts/libraries/Archaeologists.sol";
+import "../src/contracts/libraries/Sarcophaguses.sol";
+import "../aux/ACMtoken.sol";
 
 /**
  * @title The main Sarcophagus system contract
@@ -27,46 +26,37 @@ import "./AuxHarness.sol";
  * @dev All function calls "proxy" down to functions implemented in one of
  * many libraries
  */
-contract Sarcophagus is Initializable {
+contract SarcophagusHarness is Initializable {
     // keep a reference to the SARCO token, which is used for payments
     // throughout the system
-    IERC20 public sarcoToken;
+    ACMtoken public sarcoToken;
 
     // all system data is stored within this single instance (_data) of the
     // Data struct
     Datas.Data private _data;
 
-    /**
-     * @notice Contract initializer
-     * @param _sarcoToken The address of the SARCO token
-     */
-    function initialize(address _sarcoToken) public initializer {
-        sarcoToken = IERC20(_sarcoToken);
-        emit Events.Creation(_sarcoToken);
-    }
 
     /**
      * @notice Return the number of archaeologists that have been registered
      * @return total registered archaeologist count
      */
     function archaeologistCount() public view virtual returns (uint256) {
-        return _data.archaeologists.length;
+        return _data.archaeologistAddresses.length;
     }
 
     /**
      * @notice Given an index (of the full archaeologist array), return the
      * archaeologist address at that index
      * @param index The index of the registered archaeologist
-     * @return Datas.RegisteredArch of the archaeologist, was address
-     * adapted!
+     * @return address of the archaeologist
      */
-    function archaeologists(uint256 index)
+    function archaeologistAddresses(uint256 index)
         public
         view
         virtual
-        returns (Types.Archaeologist memory)  
+        returns (address)
     {
-        return _data.archaeologists[index].archaeologist;
+        return _data.archaeologistAddresses[index];
     }
 
     /**
@@ -74,7 +64,6 @@ contract Sarcophagus is Initializable {
      *eprofile
      * @param account The archaeologist account's address
      * @return the Archaeologist object
-     * unused!
      */
     function archaeologists(address account)
         public
@@ -82,29 +71,21 @@ contract Sarcophagus is Initializable {
         virtual
         returns (Types.Archaeologist memory)
     {
-        uint256 index = FindArch(account, _data);
-        if(index == type(uint256).max){
-            Types.Archaeologist memory emptyArch;
-            return emptyArch;
-        }
-        return _data.archaeologists[index].archaeologist;
+        return _data.archaeologists[account];
     }
-    
-    
 
     /**
      * @notice Return the total number of sarcophagi that have been created
      * @return the number of sarcophagi that have ever been created
      */
     function sarcophagusCount() public view virtual returns (uint256) {
-        return _data.sarcophaguses.length;
+        return _data.sarcophagusIdentifiers.length;
     }
 
     /**
      * @notice Return the unique identifier of a sarcophagus, given it's index
      * @param index The index of the sarcophagus
      * @return the unique identifier of the given sarcophagus
-     * adapted!
      */
     function sarcophagusIdentifier(uint256 index)
         public
@@ -112,14 +93,13 @@ contract Sarcophagus is Initializable {
         virtual
         returns (bytes32)
     {
-        return _data.sarcophaguses[index].sarcophagusIdentifier;
+        return _data.sarcophagusIdentifiers[index];
     }
 
     /**
      * @notice Returns the count of sarcophagi created by a specific embalmer
      * @param embalmer The address of the given embalmer
      * @return the number of sarcophagi which have been created by an embalmer
-     * adapted!
      */
     function embalmerSarcophagusCount(address embalmer)
         public
@@ -127,11 +107,7 @@ contract Sarcophagus is Initializable {
         virtual
         returns (uint256)
     {
-        uint256 index = FindEmbalmer(embalmer, _data);
-        if(index == type(uint256).max){
-            return type(uint256).max;
-        }
-        return _data.embalmers[index].embalmerSarcophaguses.length;
+        return _data.embalmerSarcophaguses[embalmer].length;
     }
 
     /**
@@ -141,7 +117,6 @@ contract Sarcophagus is Initializable {
      * @param index The index of the embalmer's list of sarcophagi
      * @return the double hash associated with the index of the embalmer's
      * sarcophagi
-     * adapted!
      */
     function embalmerSarcophagusIdentifier(address embalmer, uint256 index)
         public
@@ -149,11 +124,7 @@ contract Sarcophagus is Initializable {
         virtual
         returns (bytes32)
     {
-        uint256 index2 = FindEmbalmer(embalmer, _data);
-        if(index2 == type(uint256).max){
-            return bytes32(0); 
-        }
-         return _data.embalmers[index].embalmerSarcophaguses[index];           
+        return _data.embalmerSarcophaguses[embalmer][index];
     }
 
     /**
@@ -162,7 +133,6 @@ contract Sarcophagus is Initializable {
      * @param archaeologist The address of the given archaeologist
      * @return the number of sarcophagi which have been created for an
      * archaeologist
-     * adapted!
      */
     function archaeologistSarcophagusCount(address archaeologist)
         public
@@ -170,11 +140,7 @@ contract Sarcophagus is Initializable {
         virtual
         returns (uint256)
     {
-        uint256 index = FindArch(archaeologist, _data);
-        if(index == type(uint256).max){
-            return type(uint256).max;
-        }
-        return _data.archaeologists[index].archaeologistSarcophaguses.length;
+        return _data.archaeologistSarcophaguses[archaeologist].length;
     }
 
     /**
@@ -184,24 +150,18 @@ contract Sarcophagus is Initializable {
      * @param index The index of the archaeologist's list of sarcophagi
      * @return the identifier associated with the index of the archaeologist's
      * sarcophagi
-     * adapted
      */
     function archaeologistSarcophagusIdentifier(
         address archaeologist,
         uint256 index
     ) public view virtual returns (bytes32) {
-        uint256 index2 = FindArch(archaeologist, _data);
-        if(index2 == type(uint256).max){
-            return bytes32(0);
-        }
-        return _data.archaeologists[index2].archaeologistSarcophaguses[index];
+        return _data.archaeologistSarcophaguses[archaeologist][index];
     }
 
     /**
      * @notice Returns the count of sarcophagi created for a specific recipient
      * @param recipient The address of the given recipient
      * @return the number of sarcophagi which have been created for a recipient
-     * adapted!
      */
     function recipientSarcophagusCount(address recipient)
         public
@@ -209,11 +169,7 @@ contract Sarcophagus is Initializable {
         virtual
         returns (uint256)
     {
-        uint256 index = FindRecipient(recipient, _data);
-        if(index == type(uint256).max){
-            return type(uint256).max;
-        }
-        return _data.recipients[index].recipientSarcophaguses.length;
+        return _data.recipientSarcophaguses[recipient].length;
     }
 
     /**
@@ -223,7 +179,6 @@ contract Sarcophagus is Initializable {
      * @param index The index of the recipient's list of sarcophagi
      * @return the identifier associated with the index of the recipient's
      * sarcophagi
-     * adapted
      */
     function recipientSarcophagusIdentifier(address recipient, uint256 index)
         public
@@ -231,11 +186,7 @@ contract Sarcophagus is Initializable {
         virtual
         returns (bytes32)
     {
-        uint256 index2 = FindRecipient(recipient, _data);
-        if(index2 == type(uint256).max){
-            return bytes32(0);
-        }
-        return _data.recipients[index2].recipientSarcophaguses[index];
+        return _data.recipientSarcophaguses[recipient][index];
     }
 
     /**
@@ -244,7 +195,6 @@ contract Sarcophagus is Initializable {
      * @param archaeologist The address of the given archaeologist
      * @return the number of sarcophagi which have been successfully completed
      * by the archaeologist
-     * adapted
      */
     function archaeologistSuccessesCount(address archaeologist)
         public
@@ -252,11 +202,7 @@ contract Sarcophagus is Initializable {
         virtual
         returns (uint256)
     {
-        uint256 index = FindArch(archaeologist, _data);
-        if(index == type(uint256).max){
-            return type(uint256).max;
-        }
-        return _data.archaeologists[index].archaeologistSuccess.length;
+        return _data.archaeologistSuccesses[archaeologist].length;
     }
 
     /**
@@ -267,24 +213,18 @@ contract Sarcophagus is Initializable {
      * completed sarcophagi
      * @return the identifier associated with the index of the archaeologist's
      * successfully completed sarcophagi
-     * adapted!
      */
     function archaeologistSuccessesIdentifier(
         address archaeologist,
         uint256 index
     ) public view returns (bytes32) {
-        uint256 index2 = FindArch(archaeologist, _data);
-        if(index2 ==  type(uint256).max){
-            return bytes32(0);
-        }
-        return _data.archaeologists[index2].archaeologistSuccess[index];
+        return _data.archaeologistSuccesses[archaeologist][index];
     }
 
     /**
      * @notice Returns the count of cancelled sarcophagi from the archaeologist
      * @param archaeologist The address of the given archaeologist
      * @return the number of cancelled sarcophagi from the archaeologist
-     * adapted!
      */
     function archaeologistCancelsCount(address archaeologist)
         public
@@ -292,11 +232,7 @@ contract Sarcophagus is Initializable {
         virtual
         returns (uint256)
     {
-        uint256 index = FindArch(archaeologist, _data);
-        if(index == type(uint256).max){
-            return type(uint256).max;
-        }
-        return _data.archaeologists[index].archaeologistCancel.length;
+        return _data.archaeologistCancels[archaeologist].length;
     }
 
     /**
@@ -306,17 +242,12 @@ contract Sarcophagus is Initializable {
      * @param index The index of the archaeologist's cancelled sarcophagi
      * @return the identifier associated with the index of the archaeologist's
      * cancelled sarcophagi
-     * adapted!
      */
     function archaeologistCancelsIdentifier(
         address archaeologist,
         uint256 index
     ) public view virtual returns (bytes32) {
-        uint256 index2 = FindArch(archaeologist, _data);
-        if(index2 == type(uint256).max){
-            return bytes32(0);
-        }
-        return _data.archaeologists[index2].archaeologistCancel[index];
+        return _data.archaeologistCancels[archaeologist][index];
     }
 
     /**
@@ -330,12 +261,7 @@ contract Sarcophagus is Initializable {
         virtual
         returns (uint256)
     {
-        //adapter
-        uint256 index = FindArch(archaeologist, _data);
-        if(index == type(uint256).max){
-            return type(uint256).max;
-        }
-        return _data.archaeologists[index].archaeologistAccusal.length;
+        return _data.archaeologistAccusals[archaeologist].length;
     }
 
     /**
@@ -345,17 +271,12 @@ contract Sarcophagus is Initializable {
      * @param index The index of the archaeologist's accused sarcophagi
      * @return the identifier associated with the index of the archaeologist's
      * accused sarcophagi
-     *adapted!
      */
     function archaeologistAccusalsIdentifier(
         address archaeologist,
         uint256 index
     ) public view virtual returns (bytes32) {
-        uint256 index2 = FindArch(archaeologist, _data);
-        if(index2 == type(uint256).max){
-            return bytes32(0);
-        }
-        return _data.archaeologists[index2].archaeologistAccusal[index];
+        return _data.archaeologistAccusals[archaeologist][index];
     }
 
     /**
@@ -363,7 +284,6 @@ contract Sarcophagus is Initializable {
      * archaeologist
      * @param archaeologist The address of the given archaeologist
      * @return the number of cleaned-up sarcophagi from the archaeologist
-     * adapted!
      */
     function archaeologistCleanupsCount(address archaeologist)
         public
@@ -371,11 +291,7 @@ contract Sarcophagus is Initializable {
         virtual
         returns (uint256)
     {
-        uint256 index = FindArch(archaeologist, _data);
-        if(index == type(uint256).max){
-            return type(uint256).max;
-        }
-        return _data.archaeologists[index].archaeologistCleanup.length;
+        return _data.archaeologistCleanups[archaeologist].length;
     }
 
     /**
@@ -385,24 +301,18 @@ contract Sarcophagus is Initializable {
      * @param index The index of the archaeologist's accused sarcophagi
      * @return the identifier associated with the index of the archaeologist's
      * leaned-up sarcophagi
-     * adapted!
      */
     function archaeologistCleanupsIdentifier(
         address archaeologist,
         uint256 index
     ) public view virtual returns (bytes32) {
-        uint256 index2 = FindArch(archaeologist, _data);
-        if(index2 == type(uint256).max){
-            return bytes32(0);
-        }
-        return _data.archaeologists[index2].archaeologistCleanup[index];
+        return _data.archaeologistCleanups[archaeologist][index];
     }
 
     /**
      * @notice Returns sarcophagus data given an indentifier
      * @param identifier the unique identifier a sarcophagus
      * @return sarc the Sarcophagus object
-     * adapted!
      */
     function sarcophagus(bytes32 identifier)
         public
@@ -410,12 +320,7 @@ contract Sarcophagus is Initializable {
         virtual
         returns (Types.Sarcophagus memory)
     {
-        uint256 index = FindSarcophagus(identifier, _data);
-        if(index != type(uint256).max){
-            Types.Sarcophagus memory emptySarc;
-            return emptySarc;
-        }
-        return _data.sarcophaguses[index].sarcophagus;
+        return _data.sarcophaguses[identifier];
     }
 
     /**
