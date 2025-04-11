@@ -1,6 +1,6 @@
 # formal_verfication_certora(name subject to change)
 
-# how to run the sarpcophagus.spec
+# how to run the spec
 
 - install docker
 
