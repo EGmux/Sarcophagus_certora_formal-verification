@@ -62,13 +62,13 @@ rule unwrapSarcophagusGivesTokensToArchaeologist( Datas.Data storage data,
     bytes32 privateKey,
     IERC20 sarcoToken){
     uint256 balance_old = sarcoToken.balanceof(sarc.embalmer);
-    sarcophagus.unwrapSarcophagus(data, identifier,privateKey,sarcoToken);
+    bool didUnwrap = unwrapSarcophagus(data, identifier,privateKey,sarcoToken);
     uint256 balance_new = sarcoToken.balanceof(sarc.embalmer);
     Types.Sarcophagus storage sarc = data.sarcophaguses[identifier];
     sarcophagusState(sarc.state, Types.SarcophagusStates.Exists);
     uint256 delta = sarc.diggingFee + sarc.bounty;
     
-    assert balance_new - balance_old == delta;
+    assert balance_new - balance_old == delta <=> didUnwrap;
     }
 
 
@@ -87,12 +87,18 @@ rule createdSarcophagusAfterCancelReturnsDiggingFeeButNotBountyToArchaeologist(e
     uint256 index = cvlRegisterNewArcheologist(e,publicKey,endpoint,paymentAddress);
     uint256 sarc_index= cvlCreateNewSarcophagus(e,paymentAddress, id, publicKey);
     Types.Sarcophagus sarc = sarcophagus.sarcophagus(id); 
+
+    require(sarc.diggingFee != sarc.bounty); //para ter certeza que veio do diggingfee e nao outra coisa
+    
+
     address embalmer = sarc.embalmer;
     uint256 balance_old = acm.balanceof(paymentAddress);
     bool didCancel = cvlCancelSarcophagus(e, id, embalmer);
-    //TODO: raafm, need to check if money has indeed been sent
+    
     uint256 balance_new = acm.balanceof(paymentAddress);
     
-    assert sarc.diggingFee + acm.balanceof() <=> didCancel
-    assert sarc.state == Types.SarcophagusStates.Done && didCancel;
+    assert (balance_new == balance_old + sarc.diggingFee) <=> didCancel;
+    // didCancel == true: ocorreu o cancelamento ok
+    // didCancel ==  false: 
 }
+
