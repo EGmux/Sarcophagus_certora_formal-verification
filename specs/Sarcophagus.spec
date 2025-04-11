@@ -2,6 +2,7 @@ using SarcophagusHarness as sarcophagus;
 using Types as types;
 using Keys as keys;
 using ACMtoken as acm;
+using Loop as loop;
 
 methods {
     function SarcophagusHarness.archaeologistCount() external returns (uint256) envfree;
@@ -53,8 +54,17 @@ methods {
         uint256 minimumBounty,
         uint256 minimumDiggingFee,
         uint256 maximumResurrectionTime,
-        uint256 freeBond,
-    ) external returns (bool) {
+        uint256 freeBond
+    ) external returns (bool); 
+    function loop(
+        Sarcophagus calldata sarc,
+        uint256 n,bytes memory publicKey, 
+        string memory endpoint,
+         address paymentAddress, 
+         uint256 feePerByte, 
+         uint256 minimumBounty,
+          uint256 minimumDiggingFee,
+           uint256 maximumRessurectionTime) external returns (bool);
 }
 
 
@@ -72,8 +82,37 @@ function cvlRegisterNewArcheologist(env e, bytes publicKey, string endpoint, add
     return sarcophagus.registerArchaeologist(e,publicKey,endpoint,paymentAddress,feePerByte,minimumBounty,minimumDiggingFee,maximumResurrectionTime,freeBond);
 }
 
-function cvlUpdateArchaeologist(bytes publicKey, string endopoint, address paymentAddress){
-    return sarcophagus.updateArchaeologist(publicKey, endpoint, paymentAddress, feePerByte, minimumBounty, minimumDiggingFee, maximumResurrectionTime);    
+function cvlRegisterNewPoorArcheologist(env e, bytes publicKey, string endpoint, address paymentAddress) returns uint256{
+    uint256 feePerByte;
+    uint256 minimumBounty;
+    uint256 minimumDiggingFee;
+    uint256 maximumResurrectionTime;
+    uint256 freeBond;
+    require(feePerByte == 1);
+    require(minimumBounty == 1);
+    require(minimumDiggingFee == 1);
+    require(maximumResurrectionTime > 0);
+    require(freeBond == 3);
+    return sarcophagus.registerArchaeologist(e,publicKey,endpoint,paymentAddress,feePerByte,minimumBounty,minimumDiggingFee,maximumResurrectionTime,freeBond);
+}
+
+function cvlUpdateArchaeologist(bytes publicKey, string endopoint, address paymentAddress, uint256 feePerByte, uint256 minimumBounty, uint256 minimumDiggingFee, uint256 maximumRessurectionTime, uint256 freeBond){
+    loop.loop(sarcophagus,publicKey, endpoint, paymentAddress, feePerByte, minimumBounty, minimumDiggingFee, maximumResurrectionTime,freeBond);    
+}
+
+
+
+function cvlCreateNewCheapSarcophagus(env e,address archaeologist, bytes32 id, bytes pubKey) returns uint256{
+        string name;
+        require(name == "SE_EU_ACREDITO_ACONTECE");
+        uint256 resurrectionTime;
+        uint256 storageFee;
+        uint256 diggingFee;
+        uint256 bounty;
+        require(diggingFee == 1);
+        require(bounty == 1);
+        require(storageFee == 1);
+        return sarcophagus.createSarcophagus(e,name, archaeologist, resurrectionTime, storageFee, diggingFee, bounty, id, pubKey);
 }
 
 
@@ -287,34 +326,63 @@ rule unwrapSarcophagusAvoidDoubleSpend(env e){
     
 }
 
-// rule ArchaeologistIsNotBankerNoFractionalReserve(env e){
-//     cvlUpdateArchaeologist()
+//archeologist cant update and then get a new sarcophagus with no freebond left.
+rule ArchaeologistIsNotBankerNoFractionalReserve(env e){
+    bytes publicKey;
+    string endpoint;
+    address paymentAddress;
+    bytes32 privateKey;
+    bytes32 id;
+    bytes32 id2;
+    uint256 feePerByte;
+    uint256 minimumBounty;
+    uint256 minimumDiggingFee;
+    uint256 maximumResurrectionTime;
 
-// }
+    require(publicKey == keys.selectPublicKey(0));
+    require(privateKey == keys.selectPrivateKey(0));
+    require(endpoint == "ACM_NAO_NOS_REPROVE.com");
+    require(paymentAddress == keys.selectAddress(0));
+    cvlRegisterNewPoorArcheologist(e,publicKey,endpoint,paymentAddress);
+    cvlCreateNewCheapSarcophagus(e,paymentAddress, id, publicKey);
+    Types.Archaeologist arch= sarcophagus.archaeologists(id);
+    cvlUpdateArchaeologist(e,publicKey,endpoint,paymentAddress,feePerByte,minimumBounty,minimumDiggingFee,maximumResurrectionTime);
+        
+    sarcophagus.createSarcophagus@withrevert(e,name, archaeologist, resurrectionTime, storageFee, diggingFee, bounty, id2, pubKey);
+    assert true;
+}
 
-//     rule IdempotencyOfUpdateArchaeologist(env e) {
-//         bytes publicKey;
-//     string endpoint;
-//     address paymentAddress;
-//     bytes32 privateKey;
-//     bytes32 id;
-//     uint256 n; // esse cara deve ser provado pelo Certora, por isso nao pode ser hardcoded
 
-//     require(publicKey == keys.selectPublicKey(0));
-//     require(privateKey == keys.selectPrivateKey(0));
-//     require(endpoint == "ACM_NAO_NOS_REPROVE.com");
-//     require(paymentAddress == keys.selectAddress(0));
-//     cvlRegisterNewArcheologist(e,publicKey,endpoint,paymentAddress);
-//     cvlCreateNewSarcophagus(e,paymentAddress, id, publicKey);
-//     Types.Sarcophagus sarc1 = sarcophagus.sarcophagus(id);
-//     bool changed = false;
-//     for(int i=n; i =0; i++){
-//         sarc2 = cvlUpdtaeSarcophagus(e,sarc1);
-//         //verificar se sarc mudou:
-//         if (sarc1 != sarc2){
-//             changed = true;
-//         }
-//     }
-//     assert !changes
-// }
+rule IdempotencyOfUpdateArchaeologist(env e) {
+    bytes publicKey;
+    string endpoint;
+    address paymentAddress;
+    bytes32 privateKey;
+    bytes32 id;
+    uint256 n;
+    address id_arch;
+    uint256 feePerByte;
+    uint256 minimumBounty;
+    uint256 minimumDiggingFee;
+    uint256 maximumResurrectionTime;
+    uint256 freeBond;
+
+
+    require(publicKey == keys.selectPublicKey(0));
+    require(privateKey == keys.selectPrivateKey(0));
+    require(endpoint == "ACM_NAO_NOS_REPROVE.com");
+    require(paymentAddress == keys.selectAddress(0));
+    require(id_arch == e.msg.sender);
+    cvlRegisterNewArcheologist(e,publicKey,endpoint,paymentAddress);
+    cvlCreateNewSarcophagus(e,paymentAddress, id, publicKey);
+    sarcophagus.updateArchaeologist(e,publicKey,endpoint,paymentAddress,feePerByte,minimumBounty,minimumDiggingFee,maximumResurrectionTime,freeBond);
+    Types.Archaeologist arch1= sarcophagus.archaeologists(id);
+    cvlUpdateArchaeologist(e,sarcophagus,publicKey,endpoint,paymentAddress,feePerByte,minimumBounty,minimumDiggingFee,maximumResurrectionTime,freeBond);
+    Types.Archaeologist arch2 = sarcophagus.archaeologists(id);
+    //verify if sarch changed
+    if (arch1 != arch2){
+        assert false;
+    }
+    assert true;
+}
 
