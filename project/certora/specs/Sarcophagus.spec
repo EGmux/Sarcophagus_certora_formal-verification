@@ -1,7 +1,7 @@
 using SarcophagusHarness as sarcophagus;
 using Types as types;
 using Keys as keys;
-using ACMtoken as acm;
+using ERC20token as acm;
 
 methods {
     function SarcophagusHarness.archaeologistCount() external returns (uint256) envfree;
@@ -39,7 +39,7 @@ methods {
         uint256 resurrectionTime,
         uint256 diggingFee,
         uint256 bounty) external returns bool;
-    function ACMtoken.balanceOfACM(address account) external returns (uint256);
+    function ERC20token.balanceOfERC20(address account) external returns (uint256);
     function accuseArchaeologist(
         bytes32 identifier,
         bytes memory singleHash,
@@ -53,8 +53,8 @@ methods {
         uint256 minimumBounty,
         uint256 minimumDiggingFee,
         uint256 maximumResurrectionTime,
-        uint256 freeBond,
-    ) external returns (bool) {
+        uint256 freeBond
+    ) external returns (bool);
 }
 
 
@@ -72,14 +72,14 @@ function cvlRegisterNewArcheologist(env e, bytes publicKey, string endpoint, add
     return sarcophagus.registerArchaeologist(e,publicKey,endpoint,paymentAddress,feePerByte,minimumBounty,minimumDiggingFee,maximumResurrectionTime,freeBond);
 }
 
-function cvlUpdateArchaeologist(bytes publicKey, string endopoint, address paymentAddress){
-    return sarcophagus.updateArchaeologist(publicKey, endpoint, paymentAddress, feePerByte, minimumBounty, minimumDiggingFee, maximumResurrectionTime);    
-}
+// function cvlUpdateArchaeologist(bytes publicKey, string endopoint, address paymentAddress){
+//     return sarcophagus.updateArchaeologist(publicKey, endpoint, paymentAddress, feePerByte, minimumBounty, minimumDiggingFee, maximumResurrectionTime);    
+// }
 
 
 function cvlCreateNewSarcophagus(env e,address archaeologist, bytes32 id, bytes pubKey) returns uint256{
         string name;
-        require(name == "SE_EU_ACREDITO_ACONTECE");
+        require(name == "");
         uint256 resurrectionTime;
         uint256 storageFee;
         uint256 diggingFee;
@@ -138,7 +138,7 @@ rule sarcophagusWasUnwrapedAsExpected(env e) {
     
     require(publicKey == keys.selectPublicKey(0));
     require(privateKey == keys.selectPrivateKey(0));
-    require(endpoint == "ACM_NAO_NOS_REPROVE.com");
+    require(endpoint == "");
     require(paymentAddress == keys.selectAddress(0));
 
     cvlRegisterNewArcheologist(e,publicKey,endpoint,paymentAddress);
@@ -160,7 +160,7 @@ rule afterArewrapingTheArcheologistsReceiveDiggingFees(env e){
     
     require(publicKey == keys.selectPublicKey(0));
     require(privateKey == keys.selectPrivateKey(0));
-    require(endpoint == "ACM_NAO_NOS_REPROVE.com");
+    require(endpoint == "");
     require(paymentAddress == keys.selectAddress(0));
     cvlRegisterNewArcheologist(e,publicKey,endpoint,paymentAddress);
     cvlCreateNewSarcophagus(e,paymentAddress, id, publicKey);
@@ -171,10 +171,10 @@ rule afterArewrapingTheArcheologistsReceiveDiggingFees(env e){
     // assert beforeState == Types.SarcophagusHarness.Exists;
     
     address embalmer = sarc.embalmer;
-    uint256 balance_old = sarcophagus.sarcoToken.balanceOfACM(e,sarc.embalmer);
+    uint256 balance_old = sarcophagus.sarcoToken.balanceOfERC20(e,sarc.embalmer);
     bool didRewrap = cvlRewrapSarcophagus(e,id, embalmer);
     
-    uint256 balance_new  = sarcophagus.sarcoToken.balanceOfACM(e,sarc.embalmer);
+    uint256 balance_new  = sarcophagus.sarcoToken.balanceOfERC20(e,sarc.embalmer);
     Types.SarcophagusStates afterState = sarc.state;
 
     assert afterState == beforeState;
@@ -191,7 +191,7 @@ rule accuseArchaeologistGivesAlltoCaller(env e){
     
     require(publicKey == keys.selectPublicKey(0));
     require(privateKey == keys.selectPrivateKey(0));
-    require(endpoint == "ACM_NAO_NOS_REPROVE.com");
+    require(endpoint == ".com");
     require(paymentAddress == keys.selectAddress(0));
 
     cvlRegisterNewArcheologist(e,publicKey,endpoint,paymentAddress);
@@ -199,9 +199,9 @@ rule accuseArchaeologistGivesAlltoCaller(env e){
     
     Types.Sarcophagus sarc = sarcophagus.sarcophagus(id);
     assert sarc.state == Types.SarcophagusStates.Exists;
-    uint256 balance_old = sarcophagus.sarcoToken.balanceOfACM(e,sarc.embalmer);
+    uint256 balance_old = sarcophagus.sarcoToken.balanceOfERC20(e,sarc.embalmer);
     cvlAccuseArcheologist(e,id, paymentAddress);
-    uint256 balance_new  = sarcophagus.sarcoToken.balanceOfACM(e,sarc.embalmer);
+    uint256 balance_new  = sarcophagus.sarcoToken.balanceOfERC20(e,sarc.embalmer);
 
     assert sarc.embalmer == paymentAddress <=> balance_new - balance_old == sarc.currentCursedBond + sarc.diggingFee + sarc.bounty;
 }
@@ -222,10 +222,10 @@ rule unwrapSarcophagusGivesTokensToArchaeologist(env e){
     cvlCreateNewSarcophagus(e,paymentAddress, id, publicKey);
     Types.Sarcophagus sarc = sarcophagus.sarcophagus(id);
 
-    mathint balance_old = to_mathint(sarcophagus.sarcoToken.balanceOfACM(e,sarc.embalmer));
+    mathint balance_old = to_mathint(sarcophagus.sarcoToken.balanceOfERC20(e,sarc.embalmer));
     bool didUnwrap = cvlUnwrapSarcophagus(e,id,privateKey);
 
-    mathint balance_new = to_mathint(sarcophagus.sarcoToken.balanceOfACM(e,sarc.embalmer));
+    mathint balance_new = to_mathint(sarcophagus.sarcoToken.balanceOfERC20(e,sarc.embalmer));
 
     assert sarc.state == Types.SarcophagusStates.Exists;
 
@@ -244,7 +244,7 @@ rule createdSarcophagusAfterCancelReturnsthevalueofDiggingFeeButNotBountyToArcha
     
     require(publicKey == keys.selectPublicKey(0));
     require(privateKey == keys.selectPrivateKey(0));
-    require(endpoint == "ACM_NAO_NOS_REPROVE.com");
+    require(endpoint == "");
     require(paymentAddress == keys.selectAddress(0));
 
     uint256 index = cvlRegisterNewArcheologist(e,publicKey,endpoint,paymentAddress);
@@ -252,10 +252,10 @@ rule createdSarcophagusAfterCancelReturnsthevalueofDiggingFeeButNotBountyToArcha
     Types.Sarcophagus sarc = sarcophagus.sarcophagus(id); 
 
     address embalmer = sarc.embalmer;
-    uint256 balance_old = sarcophagus.sarcoToken.balanceOfACM(e,paymentAddress);
+    uint256 balance_old = sarcophagus.sarcoToken.balanceOfERC20(e,paymentAddress);
     bool didCancel = cvlCancelSarcophagus(e, id, embalmer);
     
-    uint256 balance_new = sarcophagus.sarcoToken.balanceOfACM(e,paymentAddress);
+    uint256 balance_new = sarcophagus.sarcoToken.balanceOfERC20(e,paymentAddress);
     
     assert (balance_new == balance_old + sarc.diggingFee) <=> didCancel;
 }
@@ -272,18 +272,17 @@ rule unwrapSarcophagusAvoidDoubleSpend(env e){
 
     require(publicKey == keys.selectPublicKey(0));
     require(privateKey == keys.selectPrivateKey(0));
-    require(endpoint == "ACM_NAO_NOS_REPROVE.com");
+    require(endpoint == "");
     require(paymentAddress == keys.selectAddress(0));
     cvlRegisterNewArcheologist(e,publicKey,endpoint,paymentAddress);
     cvlCreateNewSarcophagus(e,paymentAddress, id, publicKey);
     Types.Sarcophagus sarc = sarcophagus.sarcophagus(id);
 
-    mathint balance_old = to_mathint(sarcophagus.sarcoToken.balanceOfACM(e,sarc.embalmer));
+    mathint balance_old = to_mathint(sarcophagus.sarcoToken.balanceOfERC20(e,sarc.embalmer));
     bool didUnwrap1 = sarcophagus.unwrapSarcophagus@norevert(e,id, privateKey);
     bool didUnwrap2 = sarcophagus.unwrapSarcophagus@withrevert(e,id, privateKey);
     
     assert didUnwrap1 && !didUnwrap2;
-    Types.Archaeologist arch = sarcophagus.archaeologists(id);
     
 }
 
@@ -298,11 +297,11 @@ rule unwrapSarcophagusAvoidDoubleSpend(env e){
 //     address paymentAddress;
 //     bytes32 privateKey;
 //     bytes32 id;
-//     uint256 n; // esse cara deve ser provado pelo Certora, por isso nao pode ser hardcoded
+//     uint256 n; 
 
 //     require(publicKey == keys.selectPublicKey(0));
 //     require(privateKey == keys.selectPrivateKey(0));
-//     require(endpoint == "ACM_NAO_NOS_REPROVE.com");
+//     require(endpoint == "");
 //     require(paymentAddress == keys.selectAddress(0));
 //     cvlRegisterNewArcheologist(e,publicKey,endpoint,paymentAddress);
 //     cvlCreateNewSarcophagus(e,paymentAddress, id, publicKey);

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../src/contracts/libraries/PrivateKeys.sol";
+import "../../src/libraries/PrivateKeys.sol";
 
 contract Keys {
 

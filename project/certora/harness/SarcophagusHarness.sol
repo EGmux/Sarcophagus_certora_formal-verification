@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../src/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "../src/@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "../../src/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "../../src/@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import "../src/contracts/libraries/Events.sol";
-import "../src/contracts/libraries/Types.sol";
-import "../src/contracts/libraries/Datas.sol";
-import "../src/contracts/libraries/Archaeologists.sol";
-import "../src/contracts/libraries/Sarcophaguses.sol";
-import "../aux/ACMtoken.sol";
+import "../../src/libraries/Events.sol";
+import "../../src/libraries/Types.sol";
+import "../../src/libraries/Datas.sol";
+import "../../src/libraries/Archaeologists.sol";
+import "../../src/libraries/Sarcophaguses.sol";
+import "../aux/ERC20token.sol";
 
 /**
  * @title The main Sarcophagus system contract
@@ -29,7 +29,7 @@ import "../aux/ACMtoken.sol";
 contract SarcophagusHarness is Initializable {
     // keep a reference to the SARCO token, which is used for payments
     // throughout the system
-    ACMtoken public sarcoToken;
+    ERC20token public sarcoToken;
 
     // all system data is stored within this single instance (_data) of the
     // Data struct
