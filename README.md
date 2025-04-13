@@ -88,7 +88,7 @@ If the user fails to attest by the designated resurrection time, the nodes will 
 
 We had to apply the following workarounds while using the tool:
 
-- We had to call the `balanceOf` function provided in OpenZeppelin's library, but this function is already an override.  
+- We had to call `balanceOf` provided in OpenZeppelin's library, but this function is already an override.  
   **Solution**: Create a contract that inherits the `ERC20` superclass and implement a function that internally calls the `balanceOf` function provided by the OpenZeppelin implementation.
 
 - Although the tool is capable of generating a valid key pair (public key, private key, address), we opted to use hardcoded values for performance reasons.
