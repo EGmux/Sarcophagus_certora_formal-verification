@@ -1,19 +1,12 @@
-# Sarcophagus formal verification
+# Sarcophagus Formal Verification
 
-## 🤔 What is formal verification and Certora?
+## 🤔 What is Formal Verification and Certora?
 
-Formal verification is the act of proving or disproving hypothesis about a system by verifying
-the validity of a set of properties.
+Formal verification is the act of proving or disproving hypotheses about a system by verifying the validity of a set of properties.
 
-Certora is one of the available tools in the blockchain ecosystem capable of formal
-verification. The tool has two main concepts for defining such hypothesis the first being a rule
-and the second an invariant. A rule is any set of properties that must hold under specific
-conditions during runtime while invariants must hold during the whole runtime.
+Certora is one of the available tools in the blockchain ecosystem capable of formal verification. The tool has two main concepts for defining such hypotheses: the first being a **rule**, and the second an **invariant**. A rule is any set of properties that must hold under specific conditions during runtime, while invariants must hold throughout the entire runtime.
 
-Certora uses the CVL(certora verification language) as an DSL to describe rules and invariants.
-A valid CVL files require the .spec file extension to be recognized by the Certora compiler,
-also one could provide a .conf file to avoid passing command line flags to the cli tool
-provided by certora to verify a .spec file.
+Certora uses CVL (Certora Verification Language) as a DSL to describe rules and invariants. Valid CVL files require the `.spec` file extension to be recognized by the Certora compiler. Additionally, one can provide a `.conf` file to avoid passing command-line flags to the CLI tool provided by Certora to verify a `.spec` file.
 
 ## ⚰️ What is Sarcophagus?
 
@@ -32,8 +25,10 @@ The project combines cutting-edge decentralized technologies to ensure security,
 
 ## 🧰 Sarcophagus Architecture
 
-The application has 2 users the creator (the embalmer) and the recipient of a a secret.
+The application has two users: the creator (the **embalmer**) and the recipient of a secret.
+
 ### Create a Sarcophagus
+
 #### The user provides the following inputs:
 
 - **Payload**  
@@ -48,66 +43,59 @@ The application has 2 users the creator (the embalmer) and the recipient of a a 
   A specific future date/time when the Payload will be released if the user fails to attest.  
   - This can be updated by the user at any time before the switch is triggered.
 
-- **Nodes info**
-  Information related to the nodes (**archaeologist**) empoyed to safegurad the secret.
+- **Nodes Info**  
+  Information related to the nodes (**archaeologists**) employed to safeguard the secret.
 
 - **Payments**  
   - **ETH** to cover Arweave file storage costs.  
-  - **$SARCO (ERC-20 token)** to pay node operators (archaeologist) for their service.
-    
+  - **$SARCO (ERC-20 token)** to pay node operators (archaeologists) for their service.
+
 Both the user (**embalmer**) and the node (**archaeologist**) deposit $SARCO tokens into a contract for the duration of the switch. If the node behaves maliciously, its tokens are slashed and returned to the user. This staking mechanism incentivizes nodes to remain active and follow the protocol rules.
 
-### Attestation (Rewrapping).
-After creating a sarcophagus, the user must periodically **attest to the contract** before the resurrection time to prove continued control—essentially a "proof of life." This is done through a simple crypto transaction that resets the resurrection date. During attestation, the user must provide a new resurrection time and pay a fresh round of $SARCO tokens to the nodes for the upcoming period.
+### Attestation (Rewrapping)
 
-Once the user attests, the previously bonded $SARCO tokens are released to the nodes as payment (diggin fee), and a new set of fees and bonds are locked in. This cycle repeats indefinitely until the user either fails to attest (triggering the payload release) or manually ends the contract. 
+After creating a sarcophagus, the user must periodically **attest to the contract** before the resurrection time to prove continued control — essentially a "proof of life." This is done through a simple crypto transaction that resets the resurrection date. During attestation, the user must provide a new resurrection time and pay a fresh round of $SARCO tokens to the nodes for the upcoming period.
 
-### Burrying the Sarcophagus.
+Once the user attests, the previously bonded $SARCO tokens are released to the nodes as payment (**digging fee**), and a new set of fees and bonds are locked in. This cycle repeats indefinitely until the user either fails to attest (triggering the payload release) or manually ends the contract.
+
+### Burying the Sarcophagus
+
 If a user decides to stop using the application without triggering the payload release, they can choose to **bury** the sarcophagus. This action ends the contract, pays the nodes for their service, and releases the locked $SARCO bond tokens back to the nodes. Although the encrypted payload remains permanently stored on Arweave, the nodes stop monitoring the contract, and all associated decryption keys are purged from their systems.
 
-### Ressurection
+### Resurrection
 
-If the user fails to attest by the designated resurrection time, the nodes will publish their portion of the release key to the blockchain. This allows the designated recipient to download and decrypt the encrypted payload from Arweave. No additional fees or transactions are required for the recipient to access the file. Once the release keys are published, the nodes' responsibilities are fulfilled—they receive their payment from the contract, and their bonded $SARCO tokens are returned to their wallets.
+If the user fails to attest by the designated resurrection time, the nodes will publish their portion of the release key to the blockchain. This allows the designated recipient to download and decrypt the encrypted payload from Arweave. No additional fees or transactions are required for the recipient to access the file. Once the release keys are published, the nodes' responsibilities are fulfilled — they receive their payment from the contract, and their bonded $SARCO tokens are returned to their wallets.
 
-## 🔍 What has been verified?
+## 🔍 What Has Been Verified?
 
-If the sarcophagus has been unwraped make sure his internal state is not of a wrapped
-sarcophagus. obs: a wrapped sarcophagus has EXISTS state an unwrapped one has
-DONE state.
+- If the sarcophagus has been unwrapped, ensure its internal state is not that of a wrapped sarcophagus.  
+  **Note**: A wrapped sarcophagus has the `EXISTS` state, an unwrapped one has the `DONE` state.
 
-If the sarcophagus has been rewrapped make sure thhe archaeologist receives his due
-payment in digging fees obs: a rewrap should only happen if the user decides to extend
-his/hers timer.
+- If the sarcophagus has been rewrapped, ensure the archaeologist receives their due payment in digging fees.  
+  **Note**: A rewrap should only happen if the user decides to extend their timer.
 
-If someone accuses one of the archaeologists from opening earlier the corresponding
-sarcophagus make sure this person receives half of the locked bond and the embalmer
-receives the other half as well as the digging fee and bounty. obs: we assumed the
-embalmer could be a valid accuser.
+- If someone accuses an archaeologist of opening the sarcophagus early, ensure the accuser receives half of the locked bond and the embalmer receives the other half, as well as the digging fee and bounty.  
+  **Note**: We assumed the embalmer could be a valid accuser.
 
-If the sarcophagus has been unwraped make sure the archaeologists receive their due
-payment in digging fees and bounty
+- If the sarcophagus has been unwrapped, ensure the archaeologists receive their due payment in digging fees and bounty.
 
-If the sarcophagus has been created but the embalmer cancels it the archaeologist
-should receive digging fees.
+- If the sarcophagus has been created but is canceled by the embalmer, the archaeologist should still receive digging fees.
 
-If the sarcophagus is unwrapped once make sure if the archaeologists try to unwrap it
-agains revert. obs: avoid the double spending, remember after being unwrapped they
-receive digging fees and bounty.
+- If the sarcophagus is unwrapped once, ensure that if archaeologists try to unwrap it again, it reverts.  
+  **Note**: This avoids double-spending — after being unwrapped, they receive digging fees and bounty.
 
-## 📎 Overall experience
+## 📎 Overall Experience
 
-We had to apply the following workarounds while using the tool
+We had to apply the following workarounds while using the tool:
 
-We had to call the balanceof function provided in OpenZeppelin's library, but this function is
-already an override. The solution: create a contract that inherits the ERC20 superclass and
-implement a function that inside it's body calls the balanceof function provided in ERC20
-implementation provided by OpenZepellin.
+- We had to call the `balanceOf` function provided in OpenZeppelin's library, but this function is already an override.  
+  **Solution**: Create a contract that inherits the `ERC20` superclass and implement a function that internally calls the `balanceOf` function provided by the OpenZeppelin implementation.
 
-This tool won't support for or while loops, so to verify if a rule preserved idempotency we
-had to create auxiliary files, note that this rule is current wip.
+- The tool does not support `for` or `while` loops. To verify if a rule preserved idempotency, we had to create auxiliary files.  
+  **Note**: This rule is currently a work in progress.
 
-The tool seems to be capable of generating a valid pair of triples (public key, private key,
-address) however we opted for hardcoded value for performance reasons.
+- Although the tool is capable of generating a valid key pair (public key, private key, address), we opted to use hardcoded values for performance reasons.
+
 
 ## 🐋 How to run the spec file
 
