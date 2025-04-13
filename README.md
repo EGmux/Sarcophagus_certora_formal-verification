@@ -56,7 +56,7 @@ Both the user (**embalmer**) and the node (**archaeologist**) deposit $SARCO tok
 
 After creating a sarcophagus, the user must periodically **attest to the contract** before the resurrection time to prove continued control — essentially a "proof of life." This is done through a simple crypto transaction that resets the resurrection date. During attestation, the user must provide a new resurrection time and pay a fresh round of $SARCO tokens to the nodes for the upcoming period.
 
-Once the user attests, the previously bonded $SARCO tokens are released to the nodes as payment (**digging fee**), and a new set of fees and bonds are locked in. This cycle repeats indefinitely until the user either fails to attest (triggering the payload release) or manually ends the contract.
+Once the user attests, the previously bonded $SARCO tokens are released to the nodes as payment (**digging fee**). A node might need to stake again if during the ongoing period it decides on an increase in payment, conversely it can receive a fraction of staked tokens if it decides to reduce the fees. This cycle repeats indefinitely until the user either fails to attest (triggering the payload release) or manually ends the contract.
 
 ### Burying the Sarcophagus
 
