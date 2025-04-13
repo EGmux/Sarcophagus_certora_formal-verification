@@ -8,7 +8,7 @@ Certora is one of the available tools in the blockchain ecosystem capable of for
 
 Certora uses CVL (Certora Verification Language) as a DSL to describe rules and invariants. Valid CVL files require the `.spec` file extension to be recognized by the Certora compiler. Additionally, one can provide a `.conf` file to avoid passing command-line flags to the CLI tool provided by Certora to verify a `.spec` file.
 
-## ⚰️ What is Sarcophagus?
+## ⚰️ What is [Sarcophagus](https://github.com/sarcophagus-org/sarcophagus-contracts)?
 
 Sarcophagus is a decentralized, cryptographically secure digital dead man’s switch that releases sensitive data (a secret) only if a user fails to check in within a predetermined timeframe. It allows individuals to manage the secure transfer of digital secrets — such as a private key to a crypto wallet, a master password, or even a password manager database — under their own terms, without relying on centralized intermediaries. By giving users full control over how and when information is shared, Sarcophagus offers a reliable and autonomous solution for safeguarding critical data in an increasingly digital world.
 
