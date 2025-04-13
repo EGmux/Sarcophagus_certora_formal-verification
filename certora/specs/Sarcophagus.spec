@@ -194,7 +194,7 @@ rule accuseArchaeologistGivesAlltoCaller(env e){
     assert sarc.embalmer == paymentAddress <=> balance_new - balance_old == sarc.currentCursedBond + sarc.diggingFee + sarc.bounty;
 }
 
-// tokens are give to archaeologist
+// tokens are given to archaeologist
 rule unwrapSarcophagusGivesTokensToArchaeologist(env e){
     bytes publicKey;
     string endpoint;
