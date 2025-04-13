@@ -91,7 +91,7 @@ We had to apply the following workarounds while using the tool:
 - We had to call `balanceOf` provided in OpenZeppelin's library, but this function is already an override.  
   **Solution**: Create a contract that inherits the `ERC20` superclass and implement a function that internally calls the `balanceOf` function provided by the OpenZeppelin implementation.
 
-- Although the tool is capable of generating a valid key pair (public key, private key, address), we opted to use hardcoded values for performance reasons.
+- Although the tool is capable of generating a valid triple (public key, private key, address), we opted to use hardcoded values for performance reasons.
 
 
 ## 🐋 How to run the spec file
