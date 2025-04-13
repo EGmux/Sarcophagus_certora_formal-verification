@@ -85,7 +85,7 @@ already an override. The solution: create a contract that inherits the ERC20 sup
 implement a function that inside it's body calls the balanceof function provided in ERC20
 implementation provided by OpenZepellin.
 
-This tool won't support for or while loop, so to verify if a function preserved idempotency we
+This tool won't support for or while loop, so to verify if a rule preserved idempotency we
 had to create auxiliary files, note that this rule is current wip.
 
 The tool seems to be capable of generating a valid pair of triples (public key, private key,
