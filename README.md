@@ -15,41 +15,59 @@ A valid CVL files require the .spec file extension to be recognized by the Certo
 also one could provide a .conf file to avoid passing command line flags to the cli tool
 provided by certora to verify a .spec file.
 
-## ⚰️ What is sarcophagus?
+## ⚰️ What is Sarcophagus?
 
-The Sarcophagus smart contract allows blockchain users to leave a digital heritage to
-someone they trust after misfortune happens. To better understand the sociopolitical impact
-of such contract consider the following scenario: you are a political activist and your life could
-be threatened at any moment.
+Sarcophagus is a decentralized, cryptographically secure digital dead man’s switch that releases sensitive data (a secret) only if a user fails to check in within a predetermined timeframe. It allows individuals to manage the secure transfer of digital secrets — such as a private key to a crypto wallet, a master password, or even a password manager database — under their own terms, without relying on centralized intermediaries. By giving users full control over how and when information is shared, Sarcophagus offers a reliable and autonomous solution for safeguarding critical data in an increasingly digital world.
 
-Due to your situation you also posses highly sensitive documents that could change the
-current ruling party in your country, if you were to be killed, arrested or disappeared
-someone else must have access to such documents to continue fighting for the cause, what
-you need is a dead man switch.(paragraph subject to change)
+The project combines cutting-edge decentralized technologies to ensure security, permanence, and autonomy. Ethereum powers the smart contracts that govern the logic of the switch, while Arweave provides immutable, permanent file storage. This integration enables Sarcophagus to function as a trustless, censorship-resistant platform for managing sensitive information across a variety of use cases.  
+**Some of the initial use cases for Sarcophagus include:**
 
-Sarcophagus is a digital dead man switch that provides security, reliability, efficiency and
-privacy and can be deployed in the ethereum network.
+- Data-at-rest Security/Continuity  
+- Crypto Key Management  
+- Will and Trust  
+- Emergency Communications  
+- Political Activism & Journalism  
+- Password & Credential Recovery  
+- Time Capsule
 
 ## 🧰 Sarcophagus Architecture
 
-The smart contract has the following entities: archaeologist, embalmer, user, recipient, sarco
-token and sarcophagus. An user receives the recipient public key and encrypt a digital secret,
-select from a set of archaeologists and provide a timer. Each chosen archaeologist is
-provided a share of the whole secret and encrypt such share with his/her private key after the
-second encryption the shares are sent to an embalmer that stores then until the timer expires
-and if so the archaeologists have the right to retrieve their shares and assemble the secret
-that can only be unencrypted by the recipient private key or the user can increase the timer
-attesting to the fact that his/her is alive.(require proof reading)
+The application has 2 users the creator (the embalmer) and the recipient of a a secret.
+### Create a Sarcophagus
+#### The user provides the following inputs:
 
-If the timer is increased each archaeologist receives digging fees in sarco tokens and if
-unwrapped digging fees and a bounty, each archaeologist can select their minimum
-acceptance value for each of these payments.(require proof reading)
+- **Payload**  
+  The file (of any type) containing the secret to be released if the switch is triggered.
 
-For a node to work as an archaeologist is required an upfront investment called bonds in
-sarco tokens. This system forces a node to only supervise a set of sarcophagus if and only if
-his/her has enough bonds available, bonds can increase by unwrapping or if the embalmer
-cancel's the sarcophagus creation and decrease by creating a sarcophagus or being accused
-of opening early a sarcophagus, before the timer expires.(require proof reading)
+- **Recipient Public Key**  
+  The public key of the designated recipient; only the holder of the corresponding private key can access the Payload.  
+  - Optionally, users can generate a new Ethereum keypair and download a shareable PDF wallet.  
+  - To make the Payload public upon release, the private key can be published.
+
+- **Resurrection Time**  
+  A specific future date/time when the Payload will be released if the user fails to attest.  
+  - This can be updated by the user at any time before the switch is triggered.
+
+- **Nodes info**
+  Information related to the nodes (**archaeologist**) empoyed to safegurad the secret.
+
+- **Payments**  
+  - **ETH** to cover Arweave file storage costs.  
+  - **$SARCO (ERC-20 token)** to pay node operators (archaeologist) for their service.
+    
+Both the user (**embalmer**) and the node (**archaeologist**) deposit $SARCO tokens into a contract for the duration of the switch. If the node behaves maliciously, its tokens are slashed and returned to the user. This staking mechanism incentivizes nodes to remain active and follow the protocol rules.
+
+### Attestation (Rewrapping).
+After creating a sarcophagus, the user must periodically **attest to the contract** before the resurrection time to prove continued control—essentially a "proof of life." This is done through a simple crypto transaction that resets the resurrection date. During attestation, the user must provide a new resurrection time and pay a fresh round of $SARCO tokens to the nodes for the upcoming period.
+
+Once the user attests, the previously bonded $SARCO tokens are released to the nodes as payment (diggin fee), and a new set of fees and bonds are locked in. This cycle repeats indefinitely until the user either fails to attest (triggering the payload release) or manually ends the contract. 
+
+### Burrying the Sarcophagus.
+If a user decides to stop using the application without triggering the payload release, they can choose to **bury** the sarcophagus. This action ends the contract, pays the nodes for their service, and releases the locked $SARCO bond tokens back to the nodes. Although the encrypted payload remains permanently stored on Arweave, the nodes stop monitoring the contract, and all associated decryption keys are purged from their systems.
+
+### Ressurection
+
+If the user fails to attest by the designated resurrection time, the nodes will publish their portion of the release key to the blockchain. This allows the designated recipient to download and decrypt the encrypted payload from Arweave. No additional fees or transactions are required for the recipient to access the file. Once the release keys are published, the nodes' responsibilities are fulfilled—they receive their payment from the contract, and their bonded $SARCO tokens are returned to their wallets.
 
 ## 🔍 What has been verified?
 
