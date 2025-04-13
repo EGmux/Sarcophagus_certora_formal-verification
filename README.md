@@ -88,8 +88,8 @@ implementation provided by OpenZepellin.
 This tool won't support for or while loop, so to verify if a function preserved idempotency we
 had to create auxiliary files, note that this rule is current wip.
 
-The tool seems to be capable to generate a valid pair of the triple (public key, private key,
-address) however we opted for hardcoded values.
+The tool seems to be capable of generating a valid pair of triples (public key, private key,
+address) however we opted for hardcoded value for performance reasons.
 
 ## 🐋 How to run the spec file
 
