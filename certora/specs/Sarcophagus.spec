@@ -115,18 +115,6 @@ function cvlAccuseArcheologist(env e, bytes32 id,address accuserAddress) returns
     return sarcophagus.accuseArchaeologist(e,id,singleHash,accuserAddress);
 }
 
-ghost  storeArchsCount() returns uint256 {
-    init_state axiom storeArchsCount() == 0;
-}
-
-
-hook CALL(uint g, address addr, uint value, uint argOffs, uint argLength, uint retOffset, uint retLength) uint rc {
-    if(selector == sig:sarcophagus.registerArchaeologist(bytes, string, address, uint256, uint256, uint256, uint256,uint256).selector){
-        havoc storeArchsCount assuming
-            storeArchsCount@new() == storeArchsCount@old() + 1;
-    }
-}
-
 
 rule sarcophagusWasUnwrapedAsExpected(env e) {
     
@@ -286,34 +274,5 @@ rule unwrapSarcophagusAvoidDoubleSpend(env e){
     
 }
 
-// rule ArchaeologistIsNotBankerNoFractionalReserve(env e){
-//     cvlUpdateArchaeologist()
 
-// }
-
-//     rule IdempotencyOfUpdateArchaeologist(env e) {
-//         bytes publicKey;
-//     string endpoint;
-//     address paymentAddress;
-//     bytes32 privateKey;
-//     bytes32 id;
-//     uint256 n; 
-
-//     require(publicKey == keys.selectPublicKey(0));
-//     require(privateKey == keys.selectPrivateKey(0));
-//     require(endpoint == "");
-//     require(paymentAddress == keys.selectAddress(0));
-//     cvlRegisterNewArcheologist(e,publicKey,endpoint,paymentAddress);
-//     cvlCreateNewSarcophagus(e,paymentAddress, id, publicKey);
-//     Types.Sarcophagus sarc1 = sarcophagus.sarcophagus(id);
-//     bool changed = false;
-//     for(int i=n; i =0; i++){
-//         sarc2 = cvlUpdtaeSarcophagus(e,sarc1);
-//         //verificar se sarc mudou:
-//         if (sarc1 != sarc2){
-//             changed = true;
-//         }
-//     }
-//     assert !changes
-// }
 
