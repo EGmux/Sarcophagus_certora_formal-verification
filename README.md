@@ -1,6 +1,6 @@
 # Sarcophagus formal verification
 
-🤔 What is formal verification and Certora?
+## 🤔 What is formal verification and Certora?
 
 Formal verification is the act of proving or disproving hypothesis about a system by verifying
 the validity of a set of properties.
@@ -15,7 +15,7 @@ A valid CVL files require the .spec file extension to be recognized by the Certo
 also one could provide a .conf file to avoid passing command line flags to the cli tool
 provided by certora to verify a .spec file.
 
-⚰️ What is sarcophagus?
+## ⚰️ What is sarcophagus?
 
 The Sarcophagus smart contract allows blockchain users to leave a digital heritage to
 someone they trust after misfortune happens. To better understand the sociopolitical impact
@@ -30,7 +30,7 @@ you need is a dead man switch.
 Sarcophagus is a digital dead man switch that provides security, reliability, efficiency and
 privacy and can be deployed in the ethereum network.
 
-🧰 Sarcophagus Architecture
+## 🧰 Sarcophagus Architecture
 
 The smart contract has the following entities: archaeologist, embalmer, user, recipient, sarco
 token and sarcophagus. An user receives the recipient public key and encrypt a digital secret,
@@ -51,7 +51,7 @@ his/her has enough bonds available, bonds can increase by unwrapping or if the e
 cancel's the sarcophagus creation and decrease by creating a sarcophagus or being accused
 of opening early a sarcophagus, before the timer expires.
 
-🔍 What has been verified?
+## 🔍 What has been verified?
 
 If the sarcophagus has been unwraped make sure his internal state is not of a wrapped
 sarcophagus. obs: a wrapped sarcophagus has EXISTS state an unwrapped one has
@@ -76,7 +76,7 @@ If the sarcophagus is unwrapped once make sure if the archaeologists try to unwr
 agains revert. obs: avoid the double spending, remember after being unwrapped they
 receive digging fees and bounty.
 
-📎 Overall experience
+## 📎 Overall experience
 
 We had to apply the following workarounds while using the tool
 
@@ -91,7 +91,7 @@ had to create auxiliary files, note that this rule is current wip.
 The tool seems to be capable to generate a valid pair of the triple (public key, private key,
 address) however we opted for hardcoded values.
 
-🐋 How to run the spec file
+## 🐋 How to run the spec file
 
 install docker
 
