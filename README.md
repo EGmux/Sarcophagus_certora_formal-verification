@@ -91,9 +91,6 @@ We had to apply the following workarounds while using the tool:
 - We had to call the `balanceOf` function provided in OpenZeppelin's library, but this function is already an override.  
   **Solution**: Create a contract that inherits the `ERC20` superclass and implement a function that internally calls the `balanceOf` function provided by the OpenZeppelin implementation.
 
-- The tool does not support `for` or `while` loops. To verify if a rule preserved idempotency, we had to create auxiliary files.  
-  **Note**: This rule is currently a work in progress.
-
 - Although the tool is capable of generating a valid key pair (public key, private key, address), we opted to use hardcoded values for performance reasons.
 
 
