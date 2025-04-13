@@ -20,12 +20,12 @@ provided by certora to verify a .spec file.
 The Sarcophagus smart contract allows blockchain users to leave a digital heritage to
 someone they trust after misfortune happens. To better understand the sociopolitical impact
 of such contract consider the following scenario: you are a political activist and your life could
-be threated at any moment.
+be threatened at any moment.
 
 Due to your situation you also posses highly sensitive documents that could change the
 current ruling party in your country, if you were to be killed, arrested or disappeared
 someone else must have access to such documents to continue fighting for the cause, what
-you need is a dead man switch.
+you need is a dead man switch.(paragraph subject to change)
 
 Sarcophagus is a digital dead man switch that provides security, reliability, efficiency and
 privacy and can be deployed in the ethereum network.
@@ -39,17 +39,17 @@ provided a share of the whole secret and encrypt such share with his/her private
 second encryption the shares are sent to an embalmer that stores then until the timer expires
 and if so the archaeologists have the right to retrieve their shares and assemble the secret
 that can only be unencrypted by the recipient private key or the user can increase the timer
-attesting to the fact that his/her is alive.
+attesting to the fact that his/her is alive.(require proof reading)
 
 If the timer is increased each archaeologist receives digging fees in sarco tokens and if
 unwrapped digging fees and a bounty, each archaeologist can select their minimum
-acceptance value for each of these payments.
+acceptance value for each of these payments.(require proof reading)
 
 For a node to work as an archaeologist is required an upfront investment called bonds in
 sarco tokens. This system forces a node to only supervise a set of sarcophagus if and only if
 his/her has enough bonds available, bonds can increase by unwrapping or if the embalmer
 cancel's the sarcophagus creation and decrease by creating a sarcophagus or being accused
-of opening early a sarcophagus, before the timer expires.
+of opening early a sarcophagus, before the timer expires.(require proof reading)
 
 ## 🔍 What has been verified?
 
