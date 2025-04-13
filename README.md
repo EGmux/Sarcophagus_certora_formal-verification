@@ -95,20 +95,6 @@ address) however we opted for hardcoded value for performance reasons.
 
 install docker
 
-guide on installing docker
-
-https://docs.docker.com/engine/install/
-
-docker requires the user in the docker group if running as non root
-
-```bash
-sudo groupadd docker
-sudo usermod -aG docker $USER
-```
-# how to run the spec
-
-- install docker
-
 [guide on installing docker](https://docs.docker.com/engine/install/)
 
 - docker requires the user in the docker group if running as non root
