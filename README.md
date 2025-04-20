@@ -115,5 +115,5 @@ chmod +x ./bootstrap.sh
 ```
 - run the following command inside the container
 ```bash
-certoraRun /project/conf/sarcophagus.conf --optimistic_hashing
+certoraRun /certora/conf/sarcophagus.conf --optimistic_hashing
 ```
