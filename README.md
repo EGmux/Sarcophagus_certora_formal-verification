@@ -4,7 +4,7 @@
 
 Formal verification is the act of proving or disproving hypotheses about a system by verifying the correctness of a set of properties.
 
-Certora is one of the available tools in the blockchain ecosystem capable of formal verification. The tool has two main concepts for defining such hypotheses: the first being a **rule**, and the second an **invariant**. A rule is any set of properties that must hold under specific conditions during runtime, while invariants must hold throughout the entire runtime.
+Certora is one of the available tools in the blockchain ecosystem capable of formal verification. The tool has two main concepts for defining such hypotheses: the first being a **rule**, and the second an **invariant**. A rule is any sequence of commands that must be simulated by the prover assuming certain conditions, while invariants must be simulated and hold during the whole runtime.
 
 Certora uses CVL (Certora Verification Language) as a DSL to describe rules and invariants. Valid CVL files require the `.spec` file extension to be recognized by the Certora compiler. Additionally, one can provide a `.conf` file to avoid passing command-line flags to the CLI tool provided by Certora to verify a `.spec` file.
 
