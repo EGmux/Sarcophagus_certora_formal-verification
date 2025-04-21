@@ -2,7 +2,7 @@
 
 ## 🤔 What is Formal Verification and Certora?
 
-Formal verification is the act of proving or disproving hypotheses about a system by verifying the validity of a set of properties.
+Formal verification is the act of proving or disproving hypotheses about a system by verifying the correctness of a set of properties.
 
 Certora is one of the available tools in the blockchain ecosystem capable of formal verification. The tool has two main concepts for defining such hypotheses: the first being a **rule**, and the second an **invariant**. A rule is any set of properties that must hold under specific conditions during runtime, while invariants must hold throughout the entire runtime.
 
